@@ -5,13 +5,12 @@ import {
   Box,
   Container,
   CssBaseline,
-  Tabs,
-  Tab,
   TextField,
   Typography,
 } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import Navbar from './Navbar';
+import TabBar from './TabBar';
 import ItemList from './ItemList';
 import ConversationList from './ConversationList';
 import AddItemForm from './Modals/AddItemForm';
@@ -243,36 +242,6 @@ export default function App() {
     };
   };
 
-  const handleTabClick = (_event, newTabValue) => {
-    const currentTab = newTabValue;
-    setSearchText('');
-
-    if (currentTab === 0) {
-      setTabbedItems(ITEMS.filter((item) => { 
-        if (loggedInUser) {
-          return item.offered === true && item.userId !== loggedInUser.id; 
-        } else {
-          return item.offered === true
-        }
-      }));
-    } else if (currentTab === 1) {
-      setTabbedItems(ITEMS.filter((item) => {
-        if (loggedInUser) {
-          return !item.offered && item.userId !== loggedInUser.id; 
-        } else {
-          return !item.offered
-        }
-      }));
-    } else if (currentTab === 2) {
-      if (loggedInUser) {
-        setTabbedItems(ITEMS.filter((item) => item.userId === loggedInUser.id));
-      } else {
-        setTabbedItems([]);
-      }
-    }
-    setTabValue(currentTab);
-  };
-
   const handleSearchInput = (event) => {
     const keyword = event.target.value;
 
@@ -327,29 +296,15 @@ export default function App() {
         addItem={addItem}
         AddItemForm={AddItemForm}
       />
-      <Box display="flex" justifyContent="center" alignItems="center" sx={{ pt: 1, borderBottom: 1, borderColor: 'divider', background: '#42A5F5' }}>
-        <Tabs value={tabValue} onChange={handleTabClick}>
-          <Tab label="Offers" sx={{color: 'white'}}/>
-          <Tab label="Wanted" sx={{color: 'white'}}/>
-          {/* <Tab label="My Items" />
-          <Tab label="My Messages" /> */}
-          <Tab 
-            label="My Items"
-            sx={{color: 'white'}} 
-            style={
-              loggedInUser ? { display: "inline-flex" } : {display: "none"} 
-            } 
-          />
-          <Tab 
-            label="My Messages"
-            sx={{color: 'white'}} 
-            style={
-              loggedInUser ? { display: "inline-flex" } : {display: "none"} 
-            } 
-          />
-        </Tabs>
-      </Box>
-
+      
+      <TabBar 
+        ITEMS={ITEMS}
+        loggedInUser={loggedInUser}
+        setTabbedItems={setTabbedItems}
+        tabValue={tabValue}
+        setTabValue={setTabValue}
+        setSearchText={setSearchText}
+      />
       <Box display="flex" justifyContent="center" alignItems="center" sx={{ pt: 4 }}>
         <TextField
           type="search"
