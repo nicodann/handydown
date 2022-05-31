@@ -17,7 +17,7 @@ export default function useApplicationData() {
   useEffect(() => {
     Promise.all([
       axios.get(`/api/items`),
-      axios.get(`/api/conversations/by/user/1`)
+      axios.get(`/api/conversations/by/user/1`) // TODO: add check for existence of state.loggedInUser; TODO: make userId dynamic
     ]).then(all => {
       console.log('here is everything:', all)
       setITEMS(all[0].data);
@@ -25,26 +25,6 @@ export default function useApplicationData() {
     })
     .catch(err => console.log(err))
   }, [state.loggedInUser]);  
-
-  // LOGIN
-  const loginUser = async (loginFormData) => {
-    try {
-      const response = await axios({
-        method: 'post',
-        url: '/api/users/login',
-        data: loginFormData,
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      localStorage.clear();
-      localStorage.setItem('user', JSON.stringify(response.data));
-      setLoggedInUser(response.data);
-      setTabValue(0);
-      // setTabbedItems(ITEMS.filter((item) => item.offered && loggedInUser && item.userID !== loggedInUser.id));
-    } catch(error) {
-      const message = error.response.data;
-      return message;
-    }
-  };
 
   // REGISTER
   const registerUser = async (registrationFormData) => {
@@ -61,48 +41,147 @@ export default function useApplicationData() {
     } catch(error) {
       console.log(error)
     }
-  }
+  };
 
+  // LOGIN
+  const loginUser = async (loginFormData) => {
+    try {
+      const response = await axios({
+        method: 'post',
+        url: '/api/users/login',
+        data: loginFormData,
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      localStorage.clear();
+      localStorage.setItem('user', JSON.stringify(response.data));
+      setLoggedInUser(response.data);
+      setTabValue(0);
+    } catch(error) {
+      const message = error.response.data;
+      return message;
+    }
+  };
+
+  // LOGOUT
+  const logoutUser = async () => {
+    console.log("logging out")
+    // try {
+    //   await axios({
+    //     method: 'post',
+    //     url: '/api/users/logout'
+    //   })
+    // } catch(error) {
+    //   console.log(error);
+    // }
+
+    setLoggedInUser(null);
+    localStorage.clear();
+    setConversations([]);
+    // handleTransition("Logging Out...");
+    setTabValue(0);
+  };
+  
+  // ADD ITEM
+  const addItem = async (newItemFormData) => {
+    try {
+      const response = await axios({
+        method: 'post',
+        url: '/api/items',
+        data: newItemFormData,
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      const newItem = response.data;
+      setITEMS([newItem, ...state.ITEMS]);
+      setTabValue(2);
+    } catch(error) {
+      console.log(error);
+    }
+  };
+
+  // EDIT ITEM
+  const editItem = async (editItemFormData, id) => {
+    try {
+      const response = await axios({
+        method: 'put',
+        url: `/api/items/${id}`,
+        data: editItemFormData,
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      const updatedItem = response.data;
+      const filteredItems = state.ITEMS.filter(item => item.id !== updatedItem.id)
+      setITEMS([ updatedItem, ...filteredItems]);
+      // handleTransition("Updating Item...");
+      setTabValue(2);
+    } catch(err) {
+      console.log(err);
+    } 
+  };
+
+  // DELETE ITEM
+  const deleteItem = async (itemId, offered) => {
+    try {
+      await axios.delete(`/api/items/${itemId}`);
+      // if (tabValue === 2) {
+      //   setTabbedItems(tabbedItems.filter((tabbedItem) => tabbedItem.id !== itemId));
+      // }
+      setITEMS(state.ITEMS.filter((item) => item.id !== itemId));
+    } catch(err) {
+      console.log(err);
+    }
+  };
+
+  // ADD MESSAGE
+  const addMessage = async (newMessageFormData) => {
+    try {
+      const response = await axios({
+        method: 'post',
+        url: '/api/messages',
+        data: newMessageFormData,
+      });
+      const returnedConversation = response.data;
+      const filteredConversations= state.conversations.filter(conversation => conversation.id !== returnedConversation.id);
+      setConversations([returnedConversation, ...filteredConversations]);
+      return returnedConversation;
+    } catch(err) {
+      console.log(err);
+    };
+  };
+
+  //MARK CONVO AS READ
+  const markAsRead =  async (conversationId, readByWhom) => {
+    try {
+       await axios.put(`/api/conversations/${conversationId}`, {readByWhom: readByWhom});
+    } catch(err) {
+      console.log(err);
+    }
+  };
+
+  // const checkLoggedInUser = async () => {
+  //   try {
+  //     const response = await axios({
+  //       method: 'post',
+  //       url: '/api/users/logged_in',
+  //     });
+  //     setLoggedInUser(response.data);
+  //   } catch (error) {
+  //       console.log('POST /api/users/logged_in', error.response.data)
+  //       console.log(error);
+  //   }
+  // };
+          
   return { 
     state,
     setITEMS,
     setConversations,
     setLoggedInUser,
     setTabValue,
+    registerUser,
     loginUser,
-    registerUser
+    logoutUser,
+    addItem,
+    editItem,
+    deleteItem,
+    addMessage,
+    markAsRead
   };
-
-//   // FETCH ALL ITEMS
-//   useEffect(() => {
-//     axios.get("/api/items")
-//     .then((items) => {
-//       setITEMS(items.data);
-//       console.log('HERE ARE THE ITEMS', items.data);
-//       return items.data;
-//     })
-//     .then((data) => {
-//       setTabbedItems(data.filter((item) => {
-//         if (loggedInUser) {
-//           return item.offered === true && item.userId !== loggedInUser.id; 
-//         } else {
-//           return item.offered === true
-//         }
-//       }))
-//     })
-//     .catch((error) => console.log(error));
-// }, [loggedInUser]);
-
-// // FETCH ALL CONVERSATIONS BELONGING TO LOGGED IN USER
-// useEffect(() => {
-//   if (loggedInUser) {
-//     axios.get(`/api/conversations/by/user/${loggedInUser.id}`)
-//       .then((conversations) => {
-//         setConversations(conversations.data);
-//         console.log("HERE ARE THE CONVERSATIONS", conversations.data)
-//       })
-//       .catch((error) => console.log(error));
-
-//   }
-//   }, [loggedInUser]);
 };
