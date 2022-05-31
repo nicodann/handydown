@@ -7,17 +7,18 @@ import {
 } from '@mui/material';
 import Item from './Item';
 import SingleItemModal from './Modals/SingleItemModal';
+import {getOfferedItems, getWantedItems, getMyItems} from '../helpers/selectors';
 
 export default function ItemList(props) {
   const {
+    tabIndex,
     items,
     loggedInUser,
-    deleteItem,
-    addMessage,
-    setTabValue,
     tabValue,
-    tabIndex,
-    editItem
+    deleteItem,
+    editItem,
+    addMessage,
+    setTabValue
   } = props;
 
   //MODAL STATE LOGIC
@@ -39,7 +40,29 @@ export default function ItemList(props) {
     setOpen(true)
   }
 
-  
+  let filteredItems;
+  if (tabIndex === 0) {
+    filteredItems = getOfferedItems(items);
+  } else if (tabIndex === 1) {
+    filteredItems = getWantedItems(items);
+  } else {
+    filteredItems = getMyItems(items, loggedInUser);
+  };
+
+  const mappedItems = filteredItems.map((item) => ( 
+    <Item
+      key={item.id}
+      id={item.id}
+      name={item.name}
+      description={item.description}
+      offered={item.offered}
+      image={item.image}
+      createdAt={item.createdAt}
+      username={item.user && item.user.username}
+      location={item.user && item.user.location}
+      onClick={() => openModal(item)}
+    />
+  ));
 
   return (
     <div 
@@ -51,7 +74,8 @@ export default function ItemList(props) {
         items && items.length > 0 ? (
         <Box sx={{ flexGrow: 1 }}>
           <Grid container spacing={6}>
-            { items.map((item) => ( 
+            {mappedItems}
+            {/* { items.map((item) => ( 
               <Item
                 key={item.id}
                 id={item.id}
@@ -64,7 +88,7 @@ export default function ItemList(props) {
                 location={item.user && item.user.location}
                 onClick={() => openModal(item)}
               />
-            ))}
+            ))} */}
             <SingleItemModal
               key={modalProps.id}
               itemId={modalProps.id} // for ReplyForm, among others

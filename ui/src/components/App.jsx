@@ -16,22 +16,32 @@ import ConversationList from './ConversationList';
 import AddItemForm from './Modals/AddItemForm';
 import LoginForm from './Modals/LoginForm';
 import RegistrationForm from './Modals/RegistrationForm';
+import useApplicationData from '../hooks/useApplicationData';
+import selectors from '../helpers/selectors';
 
 export default function App() {
 
   // STATE
-  const [loggedInUser, setLoggedInUser] = useState(null);
-  const [ITEMS, setITEMS] = useState(null);
-  const [tabbedItems, setTabbedItems] = useState([]);
+  // const [loggedInUser, setLoggedInUser] = useState(null);
+  // const [ITEMS, setITEMS] = useState(null);
+  // const [tabbedItems, setTabbedItems] = useState([]);
   const [searchedItems, setSearchedItems] = useState([])
-  const [conversations, setConversations] = useState([]);
-  const [tabValue, setTabValue ] = useState(0);
+  // const [conversations, setConversations] = useState([]);
+  // const [tabValue, setTabValue ] = useState(0);
   const [searchText, setSearchText] = useState("");
-  const [formOpen, setFormOpen] = useState(false);
-  const [loginFormOpen, setLoginFormOpen] = useState(false);
-  const [regFormOpen, setRegFormOpen] = useState(false);
   const [transition, setTransition] = useState(false);
   const [transitionPhrase, setTransitionPhrase] = useState('Loading...')
+
+  const {
+    state,
+    setITEMS,
+    ITEMS,
+    setConversations,
+    setLoggedInUser,
+    setTabValue,
+    loginUser,
+    registerUser
+  } = useApplicationData();
 
 //   useEffect(() => {
 //     console.log("tabbedItems:",tabbedItems);
@@ -59,15 +69,13 @@ export default function App() {
           //   }
           // };
           
-  // CHECK IF USER HAS PREVIOUSLY LOGGED IN
   useEffect(() => {
-
     // 👇️ set style on body element
     // document.body.style.backgroundColor = '#bbdefb';
     document.body.style.backgroundColor = '#f5f5f5';
-
-    
   }, []);
+          
+  // CHECK IF USER HAS PREVIOUSLY LOGGED IN
   useEffect(() => {
     const loggedInUser = localStorage.getItem('user');
     if (loggedInUser) {
@@ -76,75 +84,75 @@ export default function App() {
     }
   }, [])
 
-  // FETCH ALL ITEMS
-  useEffect(() => {
-    axios.get("/api/items")
-    .then((items) => {
-      setITEMS(items.data);
-      console.log('HERE ARE THE ITEMS', items.data);
-      return items.data;
-    })
-    .then((data) => {
-      setTabbedItems(data.filter((item) => {
-        if (loggedInUser) {
-          return item.offered === true && item.userId !== loggedInUser.id; 
-        } else {
-          return item.offered === true
-        }
-      }))
-  })
-    .catch((error) => console.log(error));
-  }, [loggedInUser]);
+  // // FETCH ALL ITEMS
+  // useEffect(() => {
+  //   axios.get("/api/items")
+  //   .then((items) => {
+  //     setITEMS(items.data);
+  //     console.log('HERE ARE THE ITEMS', items.data);
+  //     return items.data;
+  //   })
+  //   .then((data) => {
+  //     setTabbedItems(data.filter((item) => {
+  //       if (loggedInUser) {
+  //         return item.offered === true && item.userId !== loggedInUser.id; 
+  //       } else {
+  //         return item.offered === true
+  //       }
+  //     }))
+  // })
+  //   .catch((error) => console.log(error));
+  // }, [loggedInUser]);
 
-  // FETCH ALL CONVERSATIONS BELONGING TO LOGGED IN USER
-  useEffect(() => {
-    if (loggedInUser) {
-      axios.get(`/api/conversations/by/user/${loggedInUser.id}`)
-        .then((conversations) => {
-          setConversations(conversations.data);
-          console.log("HERE ARE THE CONVERSATIONS", conversations.data)
-        })
-        .catch((error) => console.log(error));
+  // // FETCH ALL CONVERSATIONS BELONGING TO LOGGED IN USER
+  // useEffect(() => {
+  //   if (loggedInUser) {
+  //     axios.get(`/api/conversations/by/user/${loggedInUser.id}`)
+  //       .then((conversations) => {
+  //         setConversations(conversations.data);
+  //         console.log("HERE ARE THE CONVERSATIONS", conversations.data)
+  //       })
+  //       .catch((error) => console.log(error));
 
-    }
-    }, [loggedInUser]);
+  //   }
+  //   }, [loggedInUser]);
 
-  // LOGIN
-  const loginUser = async (loginFormData) => {
-    try {
-      const response = await axios({
-        method: 'post',
-        url: '/api/users/login',
-        data: loginFormData,
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      localStorage.clear();
-      localStorage.setItem('user', JSON.stringify(response.data));
-      setLoggedInUser(response.data);
-      setTabValue(0);
-      setTabbedItems(ITEMS.filter((item) => item.offered && loggedInUser && item.userID !== loggedInUser.id));
-    } catch(error) {
-      const message = error.response.data;
-      return message;
-    }
-  };
+  // // LOGIN
+  // const loginUser = async (loginFormData) => {
+  //   try {
+  //     const response = await axios({
+  //       method: 'post',
+  //       url: '/api/users/login',
+  //       data: loginFormData,
+  //       headers: { "Content-Type": "multipart/form-data" },
+  //     });
+  //     localStorage.clear();
+  //     localStorage.setItem('user', JSON.stringify(response.data));
+  //     setLoggedInUser(response.data);
+  //     setTabValue(0);
+  //     setTabbedItems(ITEMS.filter((item) => item.offered && loggedInUser && item.userID !== loggedInUser.id));
+  //   } catch(error) {
+  //     const message = error.response.data;
+  //     return message;
+  //   }
+  // };
 
-  // REGISTER
-  const registerUser = async (registrationFormData) => {
-    try {
-      const response = await axios({
-        method: 'post',
-        url: '/api/users',
-        data: registrationFormData,
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      setLoggedInUser(response.data);
-      localStorage.clear();
-      localStorage.setItem('user', JSON.stringify(response.data));
-    } catch(error) {
-      console.log(error)
-    }
-  }
+  // // REGISTER
+  // const registerUser = async (registrationFormData) => {
+  //   try {
+  //     const response = await axios({
+  //       method: 'post',
+  //       url: '/api/users',
+  //       data: registrationFormData,
+  //       headers: { "Content-Type": "multipart/form-data" },
+  //     });
+  //     setLoggedInUser(response.data);
+  //     localStorage.clear();
+  //     localStorage.setItem('user', JSON.stringify(response.data));
+  //   } catch(error) {
+  //     console.log(error)
+  //   }
+  // }
 
   // LOGOUT
   const logoutUser = async () => {
@@ -163,7 +171,7 @@ export default function App() {
     setConversations([]);
     handleTransition("Logging Out...");
     setTabValue(0);
-    setTabbedItems(ITEMS.filter((item) => item.offered))
+    // setTabbedItems(ITEMS.filter((item) => item.offered))
   };
 
   // ADD ITEM
@@ -178,7 +186,7 @@ export default function App() {
       const newItem = response.data;
       setITEMS([newItem, ...ITEMS]);
       setTabValue(2);
-      setTabbedItems([newItem, ...ITEMS.filter((item) => item.userId === loggedInUser.id)]);
+      // setTabbedItems([newItem, ...ITEMS.filter((item) => item.userId === loggedInUser.id)]);
     } catch(error) {
       console.log(error);
     }
@@ -188,9 +196,9 @@ export default function App() {
   const deleteItem = async (itemId, offered) => {
     try {
       await axios.delete(`/api/items/${itemId}`);
-      if (tabValue === 2) {
-        setTabbedItems(tabbedItems.filter((tabbedItem) => tabbedItem.id !== itemId));
-      }
+      // if (tabValue === 2) {
+      //   setTabbedItems(tabbedItems.filter((tabbedItem) => tabbedItem.id !== itemId));
+      // }
       setITEMS(ITEMS.filter((item) => item.id !== itemId));
     } catch(err) {
       console.log(err);
@@ -215,8 +223,8 @@ export default function App() {
       setITEMS([ updatedItem, ...filteredItems]);
       handleTransition("Updating Item...");
       setTabValue(2);
-      setTabbedItems([updatedItem, ...ITEMS.filter((item) => item.userId === loggedInUser.id && item.id !== updatedItem.id)]);
-      console.log("tabbedItems:",tabbedItems);
+      // setTabbedItems([updatedItem, ...ITEMS.filter((item) => item.userId === loggedInUser.id && item.id !== updatedItem.id)]);
+      // console.log("tabbedItems:",tabbedItems);
     } catch(err) {
       console.log(err);
     }
@@ -233,26 +241,25 @@ export default function App() {
       });
       console.log('returned conversation', response.data);
       const returnedConversation = response.data;
-      const filteredConversations= conversations.filter(conversation => conversation.id !== returnedConversation.id);
+      const filteredConversations= state.conversations.filter(conversation => conversation.id !== returnedConversation.id);
       setConversations([returnedConversation, ...filteredConversations]);
-      // console.log('returnedConversation', returnedConversation)
       return returnedConversation;
     } catch(err) {
       console.log(err);
     };
   };
 
-  const handleSearchInput = (event) => {
-    const keyword = event.target.value;
+  // const handleSearchInput = (event) => {
+  //   const keyword = event.target.value;
 
-    if (keyword !== '') {
-      setSearchedItems(tabbedItems.filter((item) => item.name.toLowerCase().startsWith(keyword.toLowerCase())));
-    } else {
-      setSearchedItems(tabbedItems);
-    }
+  //   if (keyword !== '') {
+  //     setSearchedItems(tabbedItems.filter((item) => item.name.toLowerCase().startsWith(keyword.toLowerCase())));
+  //   } else {
+  //     setSearchedItems(tabbedItems);
+  //   }
 
-    setSearchText(keyword);
-  };
+  //   setSearchText(keyword);
+  // };
 
   //MARK CONVO AS READ
   const markAsRead =  async (conversationId, readByWhom) => {
@@ -280,78 +287,73 @@ export default function App() {
       <CssBaseline />
       <Navbar 
         LoginForm={LoginForm}
-        loggedInUser={loggedInUser}
-        loginFormOpen={loginFormOpen}
-        setLoginFormOpen={setLoginFormOpen}
         RegistrationForm={RegistrationForm}
-        regFormOpen={regFormOpen}
-        setRegFormOpen={setRegFormOpen}
-        formOpen={formOpen}
-        setFormOpen={setFormOpen}
+        AddItemForm={AddItemForm}
+        loggedInUser={state.loggedInUser}
         setTransition={setTransition}
         setTransitionPhrase={setTransitionPhrase}
         registerUser={registerUser}
         loginUser={loginUser}
         logoutUser={logoutUser}
         addItem={addItem}
-        AddItemForm={AddItemForm}
       />
       
       <TabBar 
-        ITEMS={ITEMS}
-        loggedInUser={loggedInUser}
-        setTabbedItems={setTabbedItems}
-        tabValue={tabValue}
+        ITEMS={state.ITEMS}
+        loggedInUser={state.loggedInUser}
+        // setTabbedItems={setTabbedItems}
+        tabValue={state.tabValue}
         setTabValue={setTabValue}
         setSearchText={setSearchText}
       />
-      <Box display="flex" justifyContent="center" alignItems="center" sx={{ pt: 4 }}>
+      {/* <Box display="flex" justifyContent="center" alignItems="center" sx={{ pt: 4 }}>
         <TextField
           type="search"
           value={searchText}
           onChange={handleSearchInput}
           id="outlined-search"
           label="Search by item name..."
-          sx={{ background: "white", visibility: (tabValue === 3 || tabbedItems.length === 0) ? 'hidden' : 'visible'}}
+          sx={{ background: "white", visibility: (state.tabValue === 3 || tabbedItems.length === 0) ? 'hidden' : 'visible'}}
         />
-      </Box>
+      </Box> */}
       <Container maxWidth="lg" sx={{ py: 4}}>
         <ItemList 
-          items={searchText !== '' ? searchedItems : tabbedItems}
-          tabValue={tabValue}
+          // items={searchText !== '' ? searchedItems : tabbedItems}
           tabIndex={0}
+          items={state.ITEMS}
+          tabValue={state.tabValue}
+          loggedInUser={state.loggedInUser}
           deleteItem={deleteItem}
           addMessage={addMessage}
-          loggedInUser={loggedInUser}
           setTabValue={setTabValue}
         />
         <ItemList
-          items={searchText !== '' ? searchedItems : tabbedItems}
-          tabValue={tabValue}
           tabIndex={1}
+          items={state.ITEMS}
+          tabValue={state.tabValue}
+          loggedInUser={state.loggedInUser} // for ReplyForm, among others
           deleteItem={deleteItem}
           addMessage={addMessage} // for ReplyForm
-          loggedInUser={loggedInUser} // for ReplyForm, among others
           setTabValue={setTabValue}
         />
         <ItemList
-          items={searchText !== '' ? searchedItems : tabbedItems}
-          tabValue={tabValue}
           tabIndex={2}
+          items={state.ITEMS}
+          tabValue={state.tabValue}
+          loggedInUser={state.loggedInUser} // for ReplyForm, among others
           deleteItem={deleteItem}
           editItem={editItem}
-          loggedInUser={loggedInUser} // for ReplyForm, among others
+          addMessage={addMessage}
           setTabValue={setTabValue}
         />
         <ConversationList
-          conversations={conversations}
-          loggedInUser={loggedInUser} // for ReplyForm, among others
-          addMessage={addMessage} // for ReplyForm
-          tabValue={tabValue}
-          setTabValue={setTabValue}
           tabIndex={3}
+          conversations={state.conversations}
+          tabValue={state.tabValue}
+          loggedInUser={state.loggedInUser} // for ReplyForm, among others
+          addMessage={addMessage} // for ReplyForm
+          setTabValue={setTabValue}
           markAsRead={markAsRead}
-          // loggedInUserID={loggedInUser && loggedInUser.id}
         />
       </Container>
     </>

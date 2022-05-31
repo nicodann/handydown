@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   AppBar,
   Button,
@@ -12,15 +13,9 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 export default function Navbar(props) {
 
   const {
-    loginFormOpen,
-    setLoginFormOpen,
     loggedInUser,
     RegistrationForm,
-    regFormOpen,
     LoginForm,
-    setRegFormOpen,
-    formOpen,
-    setFormOpen,
     setTransition,
     setTransitionPhrase,
     registerUser,
@@ -30,6 +25,10 @@ export default function Navbar(props) {
     AddItemForm,
   } = props;
 
+  const [formOpen, setFormOpen] = useState(false);
+  const [loginFormOpen, setLoginFormOpen] = useState(false);
+  const [regFormOpen, setRegFormOpen] = useState(false);
+
   return (
     <AppBar position="sticky" elevation={0}>
     <Toolbar>
@@ -38,7 +37,6 @@ export default function Navbar(props) {
         edge="start"
         color="inherit"
         aria-label="menu"
-        // sx={{ mr: 2 }}
         onClick={() => window.location.replace("http://localhost:3000")}
       >
         <VolunteerActivism />
@@ -101,7 +99,6 @@ export default function Navbar(props) {
         <Button
           color="warning"
           variant="contained"
-          // onClick={() => setFormOpen(true)}
           onClick={loggedInUser ? () => setFormOpen(true) : () => setLoginFormOpen(true)}
           sx={{ml: 1}}
         >

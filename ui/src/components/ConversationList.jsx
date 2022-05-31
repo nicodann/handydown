@@ -59,12 +59,12 @@ export default function ConversationList(props) {
     <Conversation
       key={conversation.id}
       id={conversation.id}
-      otherPartyName={findOtherPartyName(conversation, loggedInUser.id)}
+      otherPartyName={loggedInUser && findOtherPartyName(conversation, loggedInUser.id)}
       itemName={conversation.item.name}
       messageBody={findLatestMessageBody(conversation)}
       updatedAt={format(conversation.updatedAt)}
       onClick={() => handleClick(conversation, loggedInUser.id)}
-      read={loggedInUser.id === conversation.creatorId ? conversation.readByCreator : conversation.readByReceiver}
+      read={loggedInUser && loggedInUser.id === conversation.creatorId ? conversation.readByCreator : conversation.readByReceiver}
     />
   );
   return (

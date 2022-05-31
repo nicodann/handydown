@@ -9,7 +9,7 @@ export default function TabBar(props) {
   const {
     ITEMS,
     loggedInUser,
-    setTabbedItems,
+    // setTabbedItems,
     tabValue,
     setTabValue,
     setSearchText
@@ -19,30 +19,30 @@ export default function TabBar(props) {
     const currentTab = newValue;
     setSearchText('');
 
-    if (currentTab === 0) {
-      setTabbedItems(ITEMS.filter((item) => { 
-        if (loggedInUser) {
-          return item.offered === true && item.userId !== loggedInUser.id; 
-        } else {
-          return item.offered === true
-        }
-      }));
-    } else if (currentTab === 1) {
-      setTabbedItems(ITEMS.filter((item) => {
-        if (loggedInUser) {
-          return !item.offered && item.userId !== loggedInUser.id; 
-        } else {
-          return !item.offered
-        }
-      }));
-    } else if (currentTab === 2) {
-      if (loggedInUser) {
-        setTabbedItems(ITEMS.filter((item) => item.userId === loggedInUser.id));
-      } else {
-        setTabbedItems([]);
-      }
-    }
-    setTabValue(currentTab);
+    // if (currentTab === 0) {
+    //   setTabbedItems(ITEMS.filter((item) => { 
+    //     if (loggedInUser) {
+    //       return item.offered === true && item.userId !== loggedInUser.id; 
+    //     } else {
+    //       return item.offered === true
+    //     }
+    //   }));
+    // } else if (currentTab === 1) {
+    //   setTabbedItems(ITEMS.filter((item) => {
+    //     if (loggedInUser) {
+    //       return !item.offered && item.userId !== loggedInUser.id; 
+    //     } else {
+    //       return !item.offered
+    //     }
+    //   }));
+    // } else if (currentTab === 2) {
+    //   if (loggedInUser) {
+    //     setTabbedItems(ITEMS.filter((item) => item.userId === loggedInUser.id));
+    //   } else {
+    //     setTabbedItems([]);
+    //   }
+    // }
+    // setTabValue(currentTab);
   };
 
   return (
