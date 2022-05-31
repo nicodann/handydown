@@ -33,7 +33,7 @@ export default function useApplicationData() {
         method: 'post',
         url: '/api/users',
         data: registrationFormData,
-        headers: { "Content-Type": "multipart/form-data" },
+        // headers: { "Content-Type": "multipart/form-data" },
       });
       setLoggedInUser(response.data);
       localStorage.clear();
@@ -50,7 +50,7 @@ export default function useApplicationData() {
         method: 'post',
         url: '/api/users/login',
         data: loginFormData,
-        headers: { "Content-Type": "multipart/form-data" },
+        // headers: { "Content-Type": "multipart/form-data" },
       });
       localStorage.clear();
       localStorage.setItem('user', JSON.stringify(response.data));
