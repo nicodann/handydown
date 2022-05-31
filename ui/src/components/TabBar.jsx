@@ -7,16 +7,16 @@ import {
 export default function TabBar(props) {
 
   const {
-    ITEMS,
+    // ITEMS,
     loggedInUser,
     // setTabbedItems,
     tabValue,
-    setTabValue,
+    // setTabValue,
     setSearchText
   } = props;
 
   const handleClick = (_event, newValue) => {
-    const currentTab = newValue;
+    // const currentTab = newValue;
     setSearchText('');
 
     // if (currentTab === 0) {
