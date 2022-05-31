@@ -3,13 +3,13 @@ import axios from 'axios';
 
 export default function useApplicationData() {
   const [state, setState] = useState({
-    ITEMS: [],
+    items: [],
     conversations: [],
     loggedInUser: null,
     tabValue: 0
   }); 
 
-  const setITEMS = ITEMS => setState(prev => ({...prev, ITEMS}));
+  const setItems = items => setState(prev => ({...prev, items}));
   const setConversations = conversations => setState(prev => ({...prev, conversations}));
   const setLoggedInUser = loggedInUser => setState(prev => ({...prev, loggedInUser}));
   const setTabValue = tabValue => setState(prev => ({...prev, tabValue}));
@@ -20,7 +20,7 @@ export default function useApplicationData() {
       axios.get(`/api/conversations/by/user/1`) // TODO: add check for existence of state.loggedInUser; TODO: make userId dynamic
     ]).then(all => {
       console.log('here is everything:', all)
-      setITEMS(all[0].data);
+      setItems(all[0].data);
       setConversations(all[1].data);
     })
     .catch(err => console.log(err))
@@ -91,7 +91,7 @@ export default function useApplicationData() {
         headers: { "Content-Type": "multipart/form-data" },
       });
       const newItem = response.data;
-      setITEMS([newItem, ...state.ITEMS]);
+      setItems([newItem, ...state.items]);
       setTabValue(2);
     } catch(error) {
       console.log(error);
@@ -108,8 +108,8 @@ export default function useApplicationData() {
         headers: { "Content-Type": "multipart/form-data" },
       });
       const updatedItem = response.data;
-      const filteredItems = state.ITEMS.filter(item => item.id !== updatedItem.id)
-      setITEMS([ updatedItem, ...filteredItems]);
+      const filteredItems = state.items.filter(item => item.id !== updatedItem.id)
+      setItems([ updatedItem, ...filteredItems]);
       // handleTransition("Updating Item...");
       setTabValue(2);
     } catch(err) {
@@ -124,7 +124,7 @@ export default function useApplicationData() {
       // if (tabValue === 2) {
       //   setTabbedItems(tabbedItems.filter((tabbedItem) => tabbedItem.id !== itemId));
       // }
-      setITEMS(state.ITEMS.filter((item) => item.id !== itemId));
+      setItems(state.items.filter((item) => item.id !== itemId));
     } catch(err) {
       console.log(err);
     }
@@ -171,7 +171,7 @@ export default function useApplicationData() {
           
   return { 
     state,
-    setITEMS,
+    setItems,
     setConversations,
     setLoggedInUser,
     setTabValue,

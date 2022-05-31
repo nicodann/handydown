@@ -26,7 +26,7 @@ export default function App() {
 
   const {
     state,
-    // setITEMS,
+    // setItems,
     // setConversations,
     setLoggedInUser,
     setTabValue,
@@ -78,7 +78,7 @@ export default function App() {
 
   // RENDER
 
-  if ((state.ITEMS === null) || (state.ITEMS && transition)) {
+  if ((state.items === null) || (state.items && transition)) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '100vh' }}>
       <CircularProgress size={80} />
@@ -104,7 +104,7 @@ export default function App() {
       />
       
       <TabBar 
-        ITEMS={state.ITEMS}
+        items={state.items}
         loggedInUser={state.loggedInUser}
         tabValue={state.tabValue}
         setTabValue={setTabValue}
@@ -124,7 +124,7 @@ export default function App() {
         <ItemList 
           // items={searchText !== '' ? searchedItems : tabbedItems}
           tabIndex={0}
-          items={state.ITEMS}
+          items={state.items}
           tabValue={state.tabValue}
           loggedInUser={state.loggedInUser}
           deleteItem={deleteItem}
@@ -133,7 +133,7 @@ export default function App() {
         />
         <ItemList
           tabIndex={1}
-          items={state.ITEMS}
+          items={state.items}
           tabValue={state.tabValue}
           loggedInUser={state.loggedInUser} // for ReplyForm, among others
           deleteItem={deleteItem}
@@ -142,7 +142,7 @@ export default function App() {
         />
         <ItemList
           tabIndex={2}
-          items={state.ITEMS}
+          items={state.items}
           tabValue={state.tabValue}
           loggedInUser={state.loggedInUser} // for ReplyForm, among others
           deleteItem={deleteItem}

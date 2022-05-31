@@ -7,7 +7,7 @@ import {
 export default function TabBar(props) {
 
   const {
-    // ITEMS,
+    // items,
     loggedInUser,
     // setTabbedItems,
     tabValue,
@@ -20,7 +20,7 @@ export default function TabBar(props) {
     setSearchText('');
 
     // if (currentTab === 0) {
-    //   setTabbedItems(ITEMS.filter((item) => { 
+    //   setTabbedItems(items.filter((item) => { 
     //     if (loggedInUser) {
     //       return item.offered === true && item.userId !== loggedInUser.id; 
     //     } else {
@@ -28,7 +28,7 @@ export default function TabBar(props) {
     //     }
     //   }));
     // } else if (currentTab === 1) {
-    //   setTabbedItems(ITEMS.filter((item) => {
+    //   setTabbedItems(items.filter((item) => {
     //     if (loggedInUser) {
     //       return !item.offered && item.userId !== loggedInUser.id; 
     //     } else {
@@ -37,7 +37,7 @@ export default function TabBar(props) {
     //   }));
     // } else if (currentTab === 2) {
     //   if (loggedInUser) {
-    //     setTabbedItems(ITEMS.filter((item) => item.userId === loggedInUser.id));
+    //     setTabbedItems(items.filter((item) => item.userId === loggedInUser.id));
     //   } else {
     //     setTabbedItems([]);
     //   }
