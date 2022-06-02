@@ -1,4 +1,4 @@
-import { useState } from 'react';
+// import { useState } from 'react';
 import { 
   Box,
   Grid,
@@ -6,63 +6,19 @@ import {
   Card
 } from '@mui/material';
 import Item from './Item';
-import SingleItemModal from './Modals/SingleItemModal';
-import {getOfferedItems, getWantedItems, getMyItems} from '../helpers/selectors';
+import { getItems } from '../helpers/selectors';
 
 export default function ItemList(props) {
-  const {
-    tabIndex,
-    items,
-    loggedInUser,
-    tabValue,
-    deleteItem,
-    editItem,
-    addMessage,
-    setTabValue
-  } = props;
-
-  //MODAL STATE LOGIC
-  const [open, setOpen] = useState(false);
-  const [modalProps, setModalProps] = useState(
-    { 
-      id: null,
-      name: '', 
-      description: '', 
-      image: '', 
-      offered: true,
-      createdAt: '',
-      user: { id: null, username: '', location: ''} 
-    }
-  )
-
-  const openModal = (props) => {
-    setModalProps(props)
-    setOpen(true)
-  }
-
-  let filteredItems;
-  if (tabIndex === 0) {
-    filteredItems = getOfferedItems(items);
-  } else if (tabIndex === 1) {
-    filteredItems = getWantedItems(items);
-  } else {
-    filteredItems = getMyItems(items, loggedInUser);
-  };
-
-  const mappedItems = filteredItems.map((item) => ( 
+  const { filter } = props;
+  let items = getItems();
+  items = items.filter(filter).map((item) => (
     <Item
       key={item.id}
-      id={item.id}
-      name={item.name}
-      description={item.description}
-      offered={item.offered}
-      image={item.image}
-      createdAt={item.createdAt}
-      username={item.user && item.user.username}
-      location={item.user && item.user.location}
-      onClick={() => openModal(item)}
+      item={item}
+      onClick={() => console.log('Item clicked')}
     />
-  ));
+  ))
+  return ({items})
 
   return (
     <div 

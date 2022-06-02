@@ -14,6 +14,16 @@ export default function useApplicationData() {
   const setLoggedInUser = loggedInUser => setState(prev => ({...prev, loggedInUser}));
   const setTabValue = tabValue => setState(prev => ({...prev, tabValue}));
 
+  // CHECK IF USER HAS PREVIOUSLY LOGGED IN
+  useEffect(() => {
+    const loggedInUser = localStorage.getItem('user');
+    if (loggedInUser) {
+      const foundUser = JSON.parse(loggedInUser);
+      setLoggedInUser(foundUser);
+    }
+  }, [])
+
+  // GET ITEMS AND CONVERSATIONS
   useEffect(() => {
     Promise.all([
       axios.get(`/api/items`),
@@ -80,6 +90,7 @@ export default function useApplicationData() {
     // handleTransition("Logging Out...");
     setTabValue(0);
   };
+  
   
   // ADD ITEM
   const addItem = async (newItemFormData) => {
