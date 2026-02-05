@@ -20,6 +20,8 @@ export default function ItemList(props) {
     editItem
   } = props;
 
+  console.log("Rendering ItemList with items:", items);
+
   //MODAL STATE LOGIC
   const [open, setOpen] = useState(false);
   const [modalProps, setModalProps] = useState(
