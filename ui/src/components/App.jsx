@@ -381,6 +381,7 @@ export default function App() {
         <Container maxWidth="lg" sx={{ py: 4}}>
           <ItemList 
             items={searchText !== '' ? searchedItems : tabbedItems}
+            loading={loading}
             tabValue={tabValue}
             tabIndex={0}
             deleteItem={deleteItem}
@@ -390,6 +391,7 @@ export default function App() {
           />
           <ItemList
             items={searchText !== '' ? searchedItems : tabbedItems}
+            loading={loading}
             tabValue={tabValue}
             tabIndex={1}
             deleteItem={deleteItem}
@@ -399,6 +401,7 @@ export default function App() {
           />
           <ItemList
             items={searchText !== '' ? searchedItems : tabbedItems}
+            loading={loading}
             tabValue={tabValue}
             tabIndex={2}
             deleteItem={deleteItem}

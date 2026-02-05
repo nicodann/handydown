@@ -5,6 +5,7 @@ import {
   Typography,
   Card
 } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
 import Item from './Item';
 import SingleItemModal from './Modals/SingleItemModal';
 
@@ -17,7 +18,8 @@ export default function ItemList(props) {
     setTabValue,
     tabValue,
     tabIndex,
-    editItem
+    editItem,
+    loading
   } = props;
 
   console.log("Rendering ItemList with items:", items);
@@ -50,7 +52,13 @@ export default function ItemList(props) {
       id={`simple-tabpanel-${tabIndex}`}
     >
       {tabValue === tabIndex && (
-        items && items.length > 0 ? (
+        // If parent reports we're loading, show a spinner instead of "No results"
+        loading ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '40vh', flexDirection: 'column' }}>
+            <CircularProgress />
+            <Typography sx={{ mt: 2 }}>Loading items...</Typography>
+          </Box>
+        ) : (items && items.length > 0) ? (
         <Box sx={{ flexGrow: 1 }}>
           <Grid container spacing={6}>
             { items.map((item) => ( 
