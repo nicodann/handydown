@@ -88,13 +88,17 @@ export default function App() {
     .then((data) => {
       setTabbedItems(data.filter((item) => {
         if (loggedInUser) {
+          setTransition(false);
           return item.offered === true && item.userId !== loggedInUser.id; 
         } else {
           return item.offered === true
         }
       }))
-  })
-    .catch((error) => console.log(error));
+    })
+    .catch((error) => {
+      console.log(`Error fetching items: ${error}`)
+      setTransition(false);
+    });
   }, [loggedInUser]);
 
   // FETCH ALL CONVERSATIONS BELONGING TO LOGGED IN USER
@@ -295,16 +299,11 @@ export default function App() {
     
   }
 
-  // RENDER
+  useEffect(() => {
+    console.log("TRANSITON:", transition)
+  }, []);
 
-  if ((ITEMS === null) || (ITEMS && transition)) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '100vh' }}>
-      <CircularProgress size={80} />
-      <Typography sx={{mt: 2}}>{transitionPhrase}</Typography>
-    </Box>
-    )
-  } else {
+  // RENDER
 
     return (
     <>
@@ -360,46 +359,56 @@ export default function App() {
           sx={{ background: "white", visibility: (tabValue === 3 || tabbedItems.length === 0) ? 'hidden' : 'visible'}}
         />
       </Box>
-      <Container maxWidth="lg" sx={{ py: 4}}>
-        <ItemList 
-          items={searchText !== '' ? searchedItems : tabbedItems}
-          tabValue={tabValue}
-          tabIndex={0}
-          deleteItem={deleteItem}
-          addMessage={addMessage}
-          loggedInUser={loggedInUser}
-          setTabValue={setTabValue}
-        />
-        <ItemList
-          items={searchText !== '' ? searchedItems : tabbedItems}
-          tabValue={tabValue}
-          tabIndex={1}
-          deleteItem={deleteItem}
-          addMessage={addMessage} // for ReplyForm
-          loggedInUser={loggedInUser} // for ReplyForm, among others
-          setTabValue={setTabValue}
-        />
-        <ItemList
-          items={searchText !== '' ? searchedItems : tabbedItems}
-          tabValue={tabValue}
-          tabIndex={2}
-          deleteItem={deleteItem}
-          editItem={editItem}
-          loggedInUser={loggedInUser} // for ReplyForm, among others
-          setTabValue={setTabValue}
-        />
-        <ConversationList
-          conversations={conversations}
-          loggedInUser={loggedInUser} // for ReplyForm, among others
-          addMessage={addMessage} // for ReplyForm
-          tabValue={tabValue}
-          setTabValue={setTabValue}
-          tabIndex={3}
-          markAsRead={markAsRead}
-          // loggedInUserID={loggedInUser && loggedInUser.id}
-        />
-      </Container>
+      {/* {(ITEMS === null || (ITEMS && transition)) && ( */}
+      {(transition) && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '100vh' }}>
+          <CircularProgress size={80} />
+          <Typography sx={{mt: 2}}>{transitionPhrase}</Typography>
+        </Box>          
+      )}
+      {/* {(ITEMS !== null && !transition) && ( */}
+        {(!transition) && (
+        <Container maxWidth="lg" sx={{ py: 4}}>
+          <ItemList 
+            items={searchText !== '' ? searchedItems : tabbedItems}
+            tabValue={tabValue}
+            tabIndex={0}
+            deleteItem={deleteItem}
+            addMessage={addMessage}
+            loggedInUser={loggedInUser}
+            setTabValue={setTabValue}
+          />
+          <ItemList
+            items={searchText !== '' ? searchedItems : tabbedItems}
+            tabValue={tabValue}
+            tabIndex={1}
+            deleteItem={deleteItem}
+            addMessage={addMessage} // for ReplyForm
+            loggedInUser={loggedInUser} // for ReplyForm, among others
+            setTabValue={setTabValue}
+          />
+          <ItemList
+            items={searchText !== '' ? searchedItems : tabbedItems}
+            tabValue={tabValue}
+            tabIndex={2}
+            deleteItem={deleteItem}
+            editItem={editItem}
+            loggedInUser={loggedInUser} // for ReplyForm, among others
+            setTabValue={setTabValue}
+          />
+          <ConversationList
+            conversations={conversations}
+            loggedInUser={loggedInUser} // for ReplyForm, among others
+            addMessage={addMessage} // for ReplyForm
+            tabValue={tabValue}
+            setTabValue={setTabValue}
+            tabIndex={3}
+            markAsRead={markAsRead}
+            // loggedInUserID={loggedInUser && loggedInUser.id}
+          />
+        </Container>        
+      )}
     </>
   ); 
-}
+// }
 }
