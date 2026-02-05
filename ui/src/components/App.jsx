@@ -33,6 +33,7 @@ export default function App() {
   const [regFormOpen, setRegFormOpen] = useState(false);
   const [transition, setTransition] = useState(false);
   const [transitionPhrase, setTransitionPhrase] = useState('Loading...')
+  const [loading, setLoading] = useState(true);
 
 //   useEffect(() => {
 //     console.log("tabbedItems:",tabbedItems);
@@ -79,6 +80,7 @@ export default function App() {
 
   // FETCH ALL ITEMS
   useEffect(() => {
+    setLoading(true);
     axios.get("/api/items")
     .then((items) => {
       setITEMS(items.data);
@@ -98,7 +100,8 @@ export default function App() {
     .catch((error) => {
       console.log(`Error fetching items: ${error}`)
       setTransition(false);
-    });
+    })
+    .finally(() => setLoading(false));
   }, [loggedInUser]);
 
   // FETCH ALL CONVERSATIONS BELONGING TO LOGGED IN USER
@@ -298,11 +301,6 @@ export default function App() {
     }
     
   }
-
-  useEffect(() => {
-    console.log("TRANSITON:", transition)
-  }, []);
-
   // RENDER
 
     return (
@@ -366,8 +364,16 @@ export default function App() {
           <Typography sx={{mt: 2}}>{transitionPhrase}</Typography>
         </Box>          
       )}
-      {/* {(ITEMS !== null && !transition) && ( */}
-        {(!transition) && (
+
+      {/* Show a loading spinner while the initial items fetch is in progress */}
+      {(!transition && loading) && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '60vh' }}>
+          <CircularProgress size={64} />
+          <Typography sx={{mt: 2}}>Loading items...</Typography>
+        </Box>
+      )}
+      {/* Render content only when ITEMS have been fetched and no transition is active */}
+  {(ITEMS !== null && !transition && !loading) && (
         <Container maxWidth="lg" sx={{ py: 4}}>
           <ItemList 
             items={searchText !== '' ? searchedItems : tabbedItems}
