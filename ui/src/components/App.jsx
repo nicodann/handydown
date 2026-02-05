@@ -301,6 +301,10 @@ export default function App() {
     }
     
   }
+
+  useEffect(() => {
+    console.log("Items:", ITEMS)
+  }, [ITEMS]);
   // RENDER
 
     return (
